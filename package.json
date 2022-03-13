@@ -1,0 +1,22 @@
+{
+  "name": "social-network-backend",
+  "version": "1.0.0",
+  "description": "backend for social-network project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreimunteanu00/social-network-backend.git"
+  },
+  "author": "Eu si Irina",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreimunteanu00/social-network-backend/issues"
+  },
+  "homepage": "https://github.com/andreimunteanu00/social-network-backend#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
