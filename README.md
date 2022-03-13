@@ -9,8 +9,8 @@ Necessary resources
 
 Usefull commands
 ```
-npm install
-npm start
+npm install (before starting to work)
+npm start (run the app)
 ```
 
 ---tbc---
