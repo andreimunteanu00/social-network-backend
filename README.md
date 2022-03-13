@@ -7,6 +7,13 @@ Necessary resources
 * [Postman](https://www.postman.com/downloads/)
 * [Docker](https://www.docker.com/products/docker-desktop)
 
+Docker
+
+```
+start:  docker-compose -f src/main/docker-simidai/mariadb.yml up -d
+stop:   docker-compose -f src/main/docker-simidai/mariadb.yml down
+```
+
 Usefull commands
 ```
 npm install (before starting to work)
