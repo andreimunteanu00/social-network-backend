@@ -10,8 +10,8 @@ Necessary resources
 Docker
 
 ```
-start:  docker-compose -f src/main/docker-simidai/mariadb.yml up -d
-stop:   docker-compose -f src/main/docker-simidai/mariadb.yml down
+start:  docker-compose -f src/main/docker-simidai/mysql.yml up -d
+stop:   docker-compose -f src/main/docker-simidai/mysql.yml down
 ```
 
 Usefull commands
