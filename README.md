@@ -2,11 +2,10 @@
 
 
 Necessary resources
-```angular2html
-[Nodejs](https://nodejs.org/en/download)
-[Postman](https://www.postman.com/downloads/)
-[Docker](https://www.docker.com/products/docker-desktop)
-```
+
+* [Nodejs](https://nodejs.org/en/download)
+* [Postman](https://www.postman.com/downloads/)
+* [Docker](https://www.docker.com/products/docker-desktop)
 
 Usefull commands
 ```
