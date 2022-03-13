@@ -10,8 +10,8 @@ Necessary resources
 Docker
 
 ```
-start:  docker-compose -f src/main/docker-simidai/mysql.yml up -d
-stop:   docker-compose -f src/main/docker-simidai/mysql.yml down
+start:  docker-compose -f docker-socialnetwork/mysql.yml up -d
+stop:   docker-compose -f docker-socialnetwork/mysql.yml down
 ```
 
 Usefull commands
