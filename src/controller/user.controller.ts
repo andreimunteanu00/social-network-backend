@@ -19,17 +19,19 @@ class UserController{
 
   static getOneById = async (req: Request, res: Response) => {
     //Get the ID from the url
-    const id: string = req.params.id;
+    const id: number = Number(req.params.id);
 
     //Get the user from database
     const userRepository = getRepository(User);
+    let user;
     try {
-      const user = await userRepository.findOneOrFail(id, {
+      user = await userRepository.findOne(id, {
         select: ["id", "username", "role"] //We dont want to send the password on response
       });
     } catch (error) {
       res.status(404).send("User not found");
     }
+    res.send(user);
   };
 
   static newUser = async (req: Request, res: Response) => {

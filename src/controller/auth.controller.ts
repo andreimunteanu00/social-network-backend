@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import {Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
-import { getRepository } from "typeorm";
-import { validate } from "class-validator";
+import {getRepository} from "typeorm";
+import {validate} from "class-validator";
 
-import { User } from "../entity/user";
+import {User} from "../entity/user";
 import config from "../config/config";
 
 class AuthController {
@@ -74,7 +74,7 @@ class AuthController {
         }
         //Hash the new password and save
         user!.hashPassword();
-        userRepository.save(user!);
+        await userRepository.save(user!);
 
         res.status(204).send();
     };
@@ -82,6 +82,7 @@ class AuthController {
     static register = async (req: Request, res: Response) => {
         const userRepository = getRepository(User);
         const { username, password } = req.body;
+
         //Check if username exists
         if (await userRepository.find({username: username}) == undefined) {
             res.status(409).send("Username already exists!");
@@ -89,7 +90,7 @@ class AuthController {
             const user = await userRepository.create({
                 username,
                 password,
-                role: ""
+                role: "user"
             });
             user.hashPassword();
             await userRepository.save(user);
