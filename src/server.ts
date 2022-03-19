@@ -39,7 +39,7 @@ const main = async () => {
     server.use(bodyParser.json());
 
     //routes
-    server.use("/", routes);
+    server.use("/api", routes);
 
     //listen
     server.listen(port, () => {
