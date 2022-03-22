@@ -31,7 +31,7 @@ class AuthController {
 
         //Sing JWT, valid for 1 hour
         const token = jwt.sign(
-            { userId: user!.id, username: user!.username },
+            { userId: user!.id, username: user!.username, role: user!.role },
             config.jwtSecret,
             { expiresIn: "7d" }
         );
