@@ -1,13 +1,11 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
     Column,
-    Unique,
-    CreateDateColumn,
-    UpdateDateColumn
+    Entity, ManyToMany, ManyToOne,
+    PrimaryGeneratedColumn,
+    Unique
 } from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import {Group} from "./group";
 
 @Entity()
 @Unique(["username"])
@@ -23,6 +21,12 @@ export class User {
 
     @Column()
     role!: string;
+
+    @ManyToMany(() => Group, group => group.users)
+    groups!: Group[];
+
+    @ManyToMany(() => Group, group => group.moderators)
+    moderatedGroups!: Group[];
 
     hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8);
