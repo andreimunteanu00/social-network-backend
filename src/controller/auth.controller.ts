@@ -5,13 +5,14 @@ import {validate} from "class-validator";
 
 import {User} from "../entity/user";
 import config from "../config/config";
+import * as HttpStatus from 'http-status';
 
 class AuthController {
     static login = async (req: Request, res: Response) => {
         //Check if username and password are set
         let { username, password } = req.body;
         if (!(username && password)) {
-            res.status(400).send();
+            res.status(HttpStatus.UNAUTHORIZED).send();
         }
 
         //Get user from database
@@ -20,12 +21,12 @@ class AuthController {
         try {
             user = await userRepository.findOneOrFail({ where: { username } });
         } catch (error) {
-            res.status(401).send();
+            res.status(HttpStatus.UNAUTHORIZED).send();
         }
 
         //Check if encrypted password match
         if (!user!.checkIfUnencryptedPasswordIsValid(password)) {
-            res.status(401).send();
+            res.status(HttpStatus.UNAUTHORIZED).send();
             return;
         }
 
@@ -47,7 +48,7 @@ class AuthController {
         //Get parameters from the body
         const { oldPassword, newPassword } = req.body;
         if (!(oldPassword && newPassword)) {
-            res.status(400).send();
+            res.status(HttpStatus.BAD_REQUEST).send();
         }
 
         //Get user from the database
@@ -56,12 +57,12 @@ class AuthController {
         try {
             user = await userRepository.findOneOrFail(id);
         } catch (id) {
-            res.status(401).send();
+            res.status(HttpStatus.UNAUTHORIZED).send();
         }
 
         //Check if old password matchs
         if (!user!.checkIfUnencryptedPasswordIsValid(oldPassword)) {
-            res.status(401).send();
+            res.status(HttpStatus.UNAUTHORIZED).send();
             return;
         }
 
@@ -69,14 +70,14 @@ class AuthController {
         user!.password = newPassword;
         const errors = await validate(user!);
         if (errors.length > 0) {
-            res.status(400).send(errors);
+            res.status(HttpStatus.BAD_REQUEST).send(errors);
             return;
         }
         //Hash the new password and save
         user!.hashPassword();
         await userRepository.save(user!);
 
-        res.status(204).send();
+        res.status(HttpStatus.NO_CONTENT).send();
     };
 
     static register = async (req: Request, res: Response) => {
@@ -85,7 +86,7 @@ class AuthController {
 
         //Check if username exists
         if (await userRepository.find({username: username}) == undefined) {
-            res.status(409).send("Username already exists!");
+            res.status(HttpStatus.CONFLICT).send("Username already exists!");
         } else {
             const user = await userRepository.create({
                 username,
@@ -94,7 +95,7 @@ class AuthController {
             });
             user.hashPassword();
             await userRepository.save(user);
-            res.status(201).send("User created!");
+            res.status(HttpStatus.CREATED).send("User created!");
         }
     }
 

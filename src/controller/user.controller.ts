@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/user";
+import * as HttpStatus from 'http-status';
 
 class UserController{
 
@@ -29,7 +30,7 @@ class UserController{
         select: ["id", "username", "role"] //We dont want to send the password on response
       });
     } catch (error) {
-      res.status(404).send("User not found");
+      res.status(HttpStatus.NOT_FOUND).send("User not found");
     }
     res.send(user);
   };
@@ -45,7 +46,7 @@ class UserController{
     //Validade if the parameters are ok
     const errors = await validate(user);
     if (errors.length > 0) {
-      res.status(400).send(errors);
+      res.status(HttpStatus.BAD_REQUEST).send(errors);
       return;
     }
 
@@ -57,12 +58,12 @@ class UserController{
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send("username already in use");
+      res.status(HttpStatus.CONFLICT).send("username already in use");
       return;
     }
 
     //If all ok, send 201 response
-    res.status(201).send("User created");
+    res.status(HttpStatus.CREATED).send("User created");
   };
 
   static editUser = async (req: Request, res: Response) => {
@@ -79,7 +80,7 @@ class UserController{
       user = await userRepository.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send("User not found");
+      res.status(HttpStatus.NOT_FOUND).send("User not found");
       return;
     }
 
@@ -88,7 +89,7 @@ class UserController{
     user.role = role;
     const errors = await validate(user);
     if (errors.length > 0) {
-      res.status(400).send(errors);
+      res.status(HttpStatus.BAD_REQUEST).send(errors);
       return;
     }
 
@@ -96,11 +97,11 @@ class UserController{
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send("username already in use");
+      res.status(HttpStatus.CONFLICT).send("username already in use");
       return;
     }
     //After all send a 204 (no content, but accepted) response
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
   };
 
   static deleteUser = async (req: Request, res: Response) => {
@@ -108,17 +109,16 @@ class UserController{
     const id = req.params.id;
 
     const userRepository = getRepository(User);
-    let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
+      await userRepository.findOneOrFail(id);
     } catch (error) {
-      res.status(404).send("User not found");
+      res.status(HttpStatus.NOT_FOUND).send("User not found");
       return;
     }
-    userRepository.delete(id);
+    await userRepository.delete(id);
 
     //After all send a 204 (no content, but accepted) response
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
   };
 };
 
