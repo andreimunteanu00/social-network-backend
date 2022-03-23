@@ -20,5 +20,8 @@ export class Group {
     @JoinTable({name: 'group_moderator'})
     moderators!: User[];
 
+    @ManyToMany(() => User, user => user.pendingGroups)
+    @JoinTable({name: 'group_pendingUser'})
+    pendingUsers!: User[];
     // posts!: Post[]
 }
