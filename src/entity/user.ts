@@ -10,29 +10,35 @@ import {Group} from "./group";
 @Entity()
 @Unique(["username"])
 export class User {
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Column()
-    username!: string;
+  @Column()
+  username!: string;
 
-    @Column()
-    password!: string;
+  @Column()
+  password!: string;
 
-    @Column()
-    role!: string;
+  @Column()
+  role!: string;
 
-    @ManyToMany(() => Group, group => group.users)
-    groups!: Group[];
+  @Column()
+  email!: string;
 
-    @ManyToMany(() => Group, group => group.moderators)
-    moderatedGroups!: Group[];
+  @Column()
+  university!: string;
 
-    hashPassword() {
-        this.password = bcrypt.hashSync(this.password, 8);
-    }
+  @ManyToMany(() => Group, group => group.users)
+  groups!: Group[];
 
-    checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-        return bcrypt.compareSync(unencryptedPassword, this.password);
-    }
+  @ManyToMany(() => Group, group => group.moderators)
+  moderatedGroups!: Group[];
+
+  hashPassword() {
+    this.password = bcrypt.hashSync(this.password, 8);
+  }
+
+  checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
+    return bcrypt.compareSync(unencryptedPassword, this.password);
+  }
 }
