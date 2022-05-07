@@ -29,7 +29,7 @@ const main = async () => {
   }
 
   const server = express();
-  const port = 8081;
+  const port = 8080;
 
   //middlewares
   server.use(helmet());
