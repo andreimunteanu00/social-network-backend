@@ -22,4 +22,4 @@ export const checkRole = (roles: Array<string>) => {
         if (roles.indexOf(user!.role) > -1) next();
         else res.status(HttpStatus.UNAUTHORIZED).send();
     };
-};
+}

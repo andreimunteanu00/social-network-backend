@@ -15,7 +15,7 @@ class UserController{
     });
 
     //Send the users object
-    res.send(users);
+    res.status(201).send(users);
   };
 
   static getOneById = async (req: Request, res: Response) => {

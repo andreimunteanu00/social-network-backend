@@ -34,11 +34,15 @@ export class User {
   @ManyToMany(() => Group, group => group.moderators)
   moderatedGroups!: Group[];
 
+  @ManyToMany(() => Group, group => group.pendingUsers)
+  pendingGroups!: Group[];
+
   hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 8);
+      this.password = bcrypt.hashSync(this.password, 8);
   }
 
   checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-    return bcrypt.compareSync(unencryptedPassword, this.password);
+      return bcrypt.compareSync(unencryptedPassword, this.password);
   }
+
 }
