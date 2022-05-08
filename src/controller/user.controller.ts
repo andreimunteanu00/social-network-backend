@@ -120,6 +120,22 @@ class UserController{
     //After all send a 204 (no content, but accepted) response
     res.status(HttpStatus.NO_CONTENT).send();
   };
-};
+
+  static getUserGroups = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+
+    console.log(userId);
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
+
+      res.status(HttpStatus.OK).send(user.groups);
+
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
+    }
+  }
+}
 
 export default UserController;

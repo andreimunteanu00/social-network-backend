@@ -2,6 +2,8 @@ import { Router } from "express";
 import UserController from "../controller/user.controller";
 import { checkJwt } from "../middleware/checkJwt";
 import { checkRole } from "../middleware/checkRole";
+import GroupController from "../controller/group.controller";
+import {User} from "../entity/user";
 
 const router = Router();
 
@@ -31,5 +33,8 @@ router.delete(
     [checkJwt, checkRole(["ADMIN"])],
     UserController.deleteUser
 );
+
+/* Get a list of user groups */
+router.get('/groups', [checkJwt], UserController.getUserGroups);
 
 export default router;
