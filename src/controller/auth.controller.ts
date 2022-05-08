@@ -48,11 +48,8 @@ class AuthController {
 
   static changePassword = async (req: Request, res: Response) => {
     try {
-    //Get ID from JWT
-    const id = res.locals.jwtPayload.userId;
-
     //Get parameters from the body
-    const { oldPassword, newPassword } = req.body;
+    const { email, oldPassword, newPassword } = req.body;
     if (!(oldPassword && newPassword)) {
       res.status(HttpStatus.BAD_REQUEST).send();
     }
@@ -61,9 +58,9 @@ class AuthController {
     const userRepository = getRepository(User);
     let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
-    } catch (id) {
-      res.status(HttpStatus.UNAUTHORIZED).send();
+      user = await userRepository.findOneOrFail({ where: { email } });
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }
 
     //Check if old password matchs
@@ -83,7 +80,8 @@ class AuthController {
     user!.hashPassword();
     await userRepository.save(user!);
 
-    res.status(HttpStatus.NO_CONTENT).send();
+    let response = {success: "Password changed successfully!"}
+    res.status(HttpStatus.OK).send(response);
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }
