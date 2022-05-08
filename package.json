@@ -25,6 +25,7 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.21",
     "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
     "express": "^4.17.3",

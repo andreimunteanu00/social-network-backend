@@ -46,8 +46,8 @@ class GroupController {
             const groupRepository = getRepository(Group);
             const userRepository = getRepository(User);
 
-            let group = await groupRepository.findOneOrFail({ where : { id : groupId } });
-            let user = await userRepository.findOneOrFail({ where : { id : userId } });
+            let group = await groupRepository.findOneOrFail({ where: { id: groupId } });
+            let user = await userRepository.findOneOrFail({ where: { id: userId } });
 
             if (group.pendingUsers == null) {
                 group.pendingUsers = [];
@@ -59,8 +59,7 @@ class GroupController {
 
             if (!group.pendingUsers.includes(user) && !user.pendingGroups.includes(group)) {
                 group.pendingUsers.push(user);
-                user.pendingGroups.push(group);
-                await groupRepository.save(group);
+                group = await groupRepository.save(group);
             } else {
                 res.status(HttpStatus.CONFLICT).send();
                 return;
@@ -80,15 +79,36 @@ class GroupController {
 
         try {
             let groupRepository = getRepository(Group);
-            let group = await groupRepository.findOneOrFail({ where : { id : groupId } });
-
-            console.log(group);
+            let group = await groupRepository.findOneOrFail({ where: { id: groupId }, relations: ["pendingUsers"]});
 
             res.status(HttpStatus.OK).send(group.pendingUsers);
 
         } catch (e) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
             return;
+        }
+    }
+
+    static approveUser = async (req: Request, res: Response) => {
+        let groupId = req.params.groupId;
+        let userId = req.body.userId;
+
+        try {
+            let groupRepository = getRepository(Group);
+            let userRepository = getRepository(User);
+
+            let group = await groupRepository.findOneOrFail({ where: { id: groupId }, relations: ["pendingUsers", "users"]});
+            let user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["pendingGroups", "groups"]});
+
+            group.pendingUsers = group.pendingUsers.filter(u => u.id !== user.id);
+            console.log(group.pendingUsers);
+            group.users.push(user);
+
+            group = await groupRepository.save(group);
+
+            res.status(HttpStatus.OK).send(group.users);
+        } catch (e) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
     }
 }

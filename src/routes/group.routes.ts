@@ -17,4 +17,7 @@ router.post('/:groupId/join', [checkJwt], GroupController.requestGroupJoin);
 /* Request a list of all pending users */
 router.get('/:groupId/pending', [checkJwt], GroupController.listPendingUsers);
 
+/* */
+router.post('/:groupId/approve', [checkJwt, checkRole(["MODERATOR", "ADMIN"])], GroupController.approveUser);
+
 export default router;

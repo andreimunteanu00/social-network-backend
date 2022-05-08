@@ -1,11 +1,7 @@
-import {
-    Column,
-    Entity, ManyToMany, ManyToOne,
-    PrimaryGeneratedColumn,
-    Unique
-} from "typeorm";
+import {Column, Entity, ManyToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
 import * as bcrypt from "bcryptjs";
 import {Group} from "./group";
+import {classToPlain, Exclude} from "class-transformer";
 
 @Entity()
 @Unique(["username"])
@@ -17,6 +13,7 @@ export class User {
   username!: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password!: string;
 
   @Column()
@@ -45,4 +42,7 @@ export class User {
       return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 
+  toJSON() {
+    return classToPlain(this);
+  }
 }
