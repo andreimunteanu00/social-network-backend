@@ -100,7 +100,7 @@ class GroupController {
             let group = await groupRepository.findOneOrFail({ where: { id: groupId }, relations: ["pendingUsers", "users"]});
             let user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["pendingGroups", "groups"]});
 
-            group.pendingUsers.filter(u => u.id !== user.id);
+            group.pendingUsers = group.pendingUsers.filter(u => u.id !== user.id);
             console.log(group.pendingUsers);
             group.users.push(user);
 
