@@ -25,7 +25,8 @@ const main = async () => {
     });
     console.log("Database connection status: \x1b[32mSUCCESSFUL\x1b[0m");
   } catch (e) {
-    console.log("Database connection status: \x1b[35mUNSUCCESSFUL\x1b[0m")
+    console.log("Database connection status: \x1b[35mUNSUCCESSFUL\x1b[0m");
+    console.log(e);
   }
 
   const server = express();

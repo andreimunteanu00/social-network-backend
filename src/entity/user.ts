@@ -25,6 +25,9 @@ export class User {
   @Column()
   university!: string;
 
+  @Column()
+  profilePic!: string;
+
   @ManyToMany(() => Group, group => group.users)
   groups!: Group[];
 

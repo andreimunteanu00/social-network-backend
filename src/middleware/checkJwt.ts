@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import * as HttpStatus from 'http-status';
+import jwt_decode from "jwt-decode";
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
     //Get the jwt token from the head

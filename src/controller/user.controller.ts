@@ -5,6 +5,9 @@ import { validate } from "class-validator";
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
 
+const multer  = require('multer')
+const upload = multer({ dest: 'src/asset/user' })
+
 class UserController{
 
   static listAll = async (req: Request, res: Response) => {
@@ -26,9 +29,7 @@ class UserController{
     const userRepository = getRepository(User);
     let user;
     try {
-      user = await userRepository.findOne(id, {
-        select: ["id", "username", "role"] //We dont want to send the password on response
-      });
+      user = await userRepository.findOne(id);
     } catch (error) {
       res.status(HttpStatus.NOT_FOUND).send("User not found");
     }
@@ -68,30 +69,8 @@ class UserController{
 
   static editUser = async (req: Request, res: Response) => {
     //Get the ID from the url
-    const id = req.params.id;
-
-    //Get values from the body
-    const { username, role } = req.body;
-
-    //Try to find user on database
+    const user: User = req.body;
     const userRepository = getRepository(User);
-    let user;
-    try {
-      user = await userRepository.findOneOrFail(id);
-    } catch (error) {
-      //If not found, send a 404 response
-      res.status(HttpStatus.NOT_FOUND).send("User not found");
-      return;
-    }
-
-    //Validate the new values on model
-    user.username = username;
-    user.role = role;
-    const errors = await validate(user);
-    if (errors.length > 0) {
-      res.status(HttpStatus.BAD_REQUEST).send(errors);
-      return;
-    }
 
     //Try to safe, if fails, that means username already in use
     try {
@@ -120,6 +99,11 @@ class UserController{
     //After all send a 204 (no content, but accepted) response
     res.status(HttpStatus.NO_CONTENT).send();
   };
+
+  static getImageById = async (req: Request, res: Response) => {
+    console.log(req.body);
+  }
+
 };
 
 export default UserController;
