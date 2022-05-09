@@ -28,10 +28,10 @@ router.get(
 router.post("/", [checkJwt, checkRole(["ADMIN"])], UserController.newUser);
 
 //Edit one user
-router.put(
+router.patch(
     "/:id([0-9]+)",
     [checkJwt, checkRole(["user"])],
-    UserController.editUser
+    UserController.save
 );
 
 //Delete one user

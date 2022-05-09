@@ -33,6 +33,18 @@ class UserController{
     res.send(user);
   };
 
+  static getImageById = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    require("fs").readFile(`src/asset/user/${userId}.png`, 'base64',(err: any, data: any) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(data);
+      res.status(HttpStatus.OK).send({ data });
+    });
+  }
+
   static newUser = async (req: Request, res: Response) => {
     //Get parameters from the body
     let { username, password, role } = req.body;
@@ -64,10 +76,20 @@ class UserController{
     res.status(HttpStatus.CREATED).send("User created");
   };
 
-  static editUser = async (req: Request, res: Response) => {
+  static save = async (req: Request, res: Response) => {
     //Get the ID from the url
     const user: User = req.body;
     const userRepository = getRepository(User);
+
+    // Upload photo if exists
+    if (!user.profilePic.includes("src")) {
+      var base64Data = user.profilePic.replace(/^data:image\/png;base64,/, "");
+      user.profilePic = `src/asset/user/${user.id}.png`;
+
+      await require("fs").writeFile(user.profilePic, base64Data, 'base64', function(err: any) {
+        console.log(err);
+      });
+    }
 
     //Try to safe, if fails, that means username already in use
     try {
@@ -111,10 +133,6 @@ class UserController{
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
     }
-  }
-
-  static getImageById = async (req: Request, res: Response) => {
-    console.log(req.body);
   }
 
 };

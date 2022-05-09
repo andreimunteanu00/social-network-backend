@@ -25,10 +25,10 @@ const main = async () => {
     });
     console.log("Database connection status: \x1b[32mSUCCESSFUL\x1b[0m");
   } catch (e) {
-    console.log("Database connection status: \x1b[35mUNSUCCESSFUL\x1b[0m");
-    console.log(e);
+    console.log("Database connection status: \x1b[35mUNSUCCESSFUL\x1b[0m")
   }
 
+  const upload = require('express-fileupload');
   const server = express();
   const port = 8080;
 
@@ -38,6 +38,7 @@ const main = async () => {
     origin: ['http://localhost:4200']
   }))
   server.use(bodyParser.json());
+  server.use(upload());
 
   //routes
   server.use("/api", routes);
