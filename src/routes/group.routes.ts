@@ -6,7 +6,7 @@ import {checkJwt} from "../middleware/checkJwt";
 const router = Router();
 
 /* Get a list of all the groups */
-router.get('/', GroupController.listAll);
+router.get('/', [checkJwt], GroupController.listAll);
 
 /* Create group */
 router.post('/', [checkJwt, checkRole(["ADMIN"])], GroupController.createGroup);

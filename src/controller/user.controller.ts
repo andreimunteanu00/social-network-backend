@@ -5,9 +5,6 @@ import { validate } from "class-validator";
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
 
-const multer  = require('multer')
-const upload = multer({ dest: 'src/asset/user' })
-
 class UserController{
 
   static listAll = async (req: Request, res: Response) => {
@@ -99,6 +96,22 @@ class UserController{
     //After all send a 204 (no content, but accepted) response
     res.status(HttpStatus.NO_CONTENT).send();
   };
+
+  static getUserGroups = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+
+    console.log(userId);
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
+
+      res.status(HttpStatus.OK).send(user.groups);
+
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
+    }
+  }
 
   static getImageById = async (req: Request, res: Response) => {
     console.log(req.body);
