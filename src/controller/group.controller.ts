@@ -4,6 +4,7 @@ import {Group} from "../entity/group";
 import {validate} from "class-validator";
 import * as HttpStatus from 'http-status';
 import {User} from "../entity/user";
+import {FileController} from "./file.controller";
 
 class GroupController {
     static listAll = async (req: Request, res: Response) => {
@@ -111,6 +112,50 @@ class GroupController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
     }
+
+  static getGroup = async (req: Request, res: Response) => {
+      const id = req.params.groupId;
+
+      try {
+        let groupRepository = getRepository(Group);
+        let group = groupRepository.findOneOrFail({ where: id });
+        res.status(HttpStatus.OK).send(group);
+      } catch (e) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+      }
+  }
+
+  static getGroupsUserNotIn = async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+
+    try {
+      const groupRepository = await getRepository(Group);
+      const user = await getRepository(User).findOneOrFail({ where: { id: userId } });
+      const groups = await groupRepository.find({relations: ["users"]});
+      const groupsWithoutUser = [];
+      for (let g of groups) {
+        let inGroup = false;
+        for (let u of g.users) {
+          if (user.id === u.id) {
+            inGroup = true;
+          }
+        }
+        if (!inGroup) {
+          groupsWithoutUser.push(g);
+        }
+      }
+      for (let g of groupsWithoutUser) {
+        try {
+          g.imageString = await Promise.resolve(FileController.getPhoto(g.image));
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      res.status(HttpStatus.OK).send({body: groupsWithoutUser});
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
 }
 
 export default GroupController;

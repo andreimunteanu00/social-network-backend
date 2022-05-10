@@ -8,6 +8,12 @@ const router = Router();
 /* Get a list of all the groups */
 router.get('/', [checkJwt], GroupController.listAll);
 
+/* Get a group */
+router.get('/:groupId', [checkJwt], GroupController.getGroup)
+
+
+router.get('/userNotIn/:userId', [checkJwt], GroupController.getGroupsUserNotIn)
+
 /* Create group */
 router.post('/', [checkJwt, checkRole(["ADMIN"])], GroupController.createGroup);
 

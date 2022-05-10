@@ -4,6 +4,7 @@ import { validate } from "class-validator";
 
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
+import {FileController} from "./file.controller";
 
 class UserController{
 
@@ -35,14 +36,8 @@ class UserController{
 
   static getImageById = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
-    require("fs").readFile(`src/asset/user/${userId}.png`, 'base64',(err: any, data: any) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(data);
-      res.status(HttpStatus.OK).send({ data });
-    });
+    const img = await Promise.resolve(FileController.getPhoto(`src/asset/user/${userId}.png`));
+    res.status(HttpStatus.OK).send({img});
   }
 
   static newUser = async (req: Request, res: Response) => {
@@ -80,12 +75,13 @@ class UserController{
     //Get the ID from the url
     const user: User = req.body;
     const userRepository = getRepository(User);
-
+    const temp = user.profilePic;
+    user.profilePic = "";
     // Upload photo if exists
     if (!user.profilePic.includes("src")) {
-      var base64Data = user.profilePic.replace(/^data:image\/png;base64,/, "");
+      //TODO solve method in file.controller.ts
+      var base64Data = temp.replace(/^data:image\/png;base64,/, "");
       user.profilePic = `src/asset/user/${user.id}.png`;
-
       await require("fs").writeFile(user.profilePic, base64Data, 'base64', function(err: any) {
         console.log(err);
       });

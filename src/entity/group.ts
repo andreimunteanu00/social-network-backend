@@ -12,6 +12,12 @@ export class Group {
   @Column()
   description!: string;
 
+  @Column()
+  image!: string;
+
+  @Column()
+  imageString!: string;
+
   @ManyToMany(() => User, user => user.groups)
   @JoinTable({name: 'group_user'})
   users!: User[];

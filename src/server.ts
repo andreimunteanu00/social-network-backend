@@ -37,7 +37,7 @@ const main = async () => {
   server.use(cors({
     origin: ['http://localhost:4200']
   }))
-  server.use(bodyParser.json());
+  server.use(bodyParser.json({ limit: '10mb' }));
   server.use(upload());
 
   //routes
