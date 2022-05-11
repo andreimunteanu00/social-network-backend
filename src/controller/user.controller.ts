@@ -76,15 +76,11 @@ class UserController{
     const user: User = req.body;
     const userRepository = getRepository(User);
     const temp = user.profilePic;
-    user.profilePic = "";
+
     // Upload photo if exists
     if (!user.profilePic.includes("src")) {
-      //TODO solve method in file.controller.ts
-      var base64Data = temp.replace(/^data:image\/png;base64,/, "");
       user.profilePic = `src/asset/user/${user.id}.png`;
-      await require("fs").writeFile(user.profilePic, base64Data, 'base64', function(err: any) {
-        console.log(err);
-      });
+      await Promise.resolve(FileController.uploadPhoto(temp, user.profilePic));
     }
 
     //Try to safe, if fails, that means username already in use
@@ -131,6 +127,6 @@ class UserController{
     }
   }
 
-};
+}
 
 export default UserController;

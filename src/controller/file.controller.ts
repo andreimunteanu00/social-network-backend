@@ -9,7 +9,7 @@ export class FileController {
 
   static uploadPhoto = async function(image: string, path: string) {
     const base64Data = image.replace(/^data:image\/png;base64,/, "");
-    await require("fs").promises.writeFile(path, base64Data);
+    await fs.promises.writeFile(path, base64Data, 'base64');
   }
 
 }
