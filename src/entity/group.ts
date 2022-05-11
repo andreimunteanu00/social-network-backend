@@ -1,5 +1,6 @@
-import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { User } from "./user";
+import {Post} from "./post";
 
 @Entity()
 export class Group {
@@ -30,4 +31,6 @@ export class Group {
   @JoinTable({name: 'group_pendinguser'})
   pendingUsers!: User[];
 
+  @OneToMany(() => Post, post => post.group)
+  posts!: Post[]
 }

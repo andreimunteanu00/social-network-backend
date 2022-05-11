@@ -44,4 +44,6 @@ router.delete(
 /* Get a list of user groups */
 router.get('/groups', [checkJwt], UserController.getUserGroups);
 
+router.get('/posts', [checkJwt], UserController.getUserPosts);
+
 export default router;
