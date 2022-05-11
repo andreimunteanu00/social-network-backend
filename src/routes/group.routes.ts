@@ -26,4 +26,7 @@ router.get('/:groupId/pending', [checkJwt], GroupController.listPendingUsers);
 /* */
 router.post('/:groupId/approve', [checkJwt, checkRole(["MODERATOR", "ADMIN"])], GroupController.approveUser);
 
+/* Returns a list of 10 posts from corresponding group, based on requested index */
+router.get('/:groupId/posts', [checkJwt], GroupController.getPosts);
+
 export default router;

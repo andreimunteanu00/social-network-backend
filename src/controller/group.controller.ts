@@ -5,6 +5,7 @@ import {validate} from "class-validator";
 import * as HttpStatus from 'http-status';
 import {User} from "../entity/user";
 import {FileController} from "./file.controller";
+import {Post} from "../entity/post";
 
 class GroupController {
     static listAll = async (req: Request, res: Response) => {
@@ -155,6 +156,25 @@ class GroupController {
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }
+  }
+
+  static getPosts = async (req: Request, res: Response) => {
+        const lastIndex = req.body.lastIndex;
+        const groupId = req.params.groupId;
+
+        try {
+            let query = await getRepository(Post).createQueryBuilder("post")
+                .where("post.groupId = :groupId", { groupId: groupId})
+                .andWhere("post.id > :lastIndex", { lastIndex: lastIndex })
+                .orderBy("post.id").limit(10);
+
+            let posts = await query.getMany();
+
+            res.status(HttpStatus.OK).send(posts);
+
+        } catch (e) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+        }
   }
 }
 

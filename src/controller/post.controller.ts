@@ -33,7 +33,6 @@ class PostController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
     }
-
 }
 
 export default PostController;
