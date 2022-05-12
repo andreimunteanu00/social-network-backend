@@ -1,7 +1,16 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique
+} from "typeorm";
 import * as bcrypt from "bcryptjs";
 import {Group} from "./group";
 import {classToPlain, Exclude} from "class-transformer";
+import {Post} from "./post";
 
 @Entity()
 @Unique(["username"])
@@ -36,6 +45,9 @@ export class User {
 
   @ManyToMany(() => Group, group => group.pendingUsers)
   pendingGroups!: Group[];
+
+  @OneToMany(() => Post, post => post.author)
+  posts!: Post[];
 
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);

@@ -127,6 +127,20 @@ class UserController{
     }
   }
 
+  static getUserPosts = async (req: Request, res: Response) => {
+    let userId = res.locals.jwtPayload.userId;
+
+    try {
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["posts"] });
+
+      res.status(HttpStatus.OK).send(user.posts);
+
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
 }
 
 export default UserController;
