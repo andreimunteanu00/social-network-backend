@@ -88,6 +88,7 @@ class GroupController {
     static approveUser = async (req: Request, res: Response) => {
         let groupId = req.params.groupId;
         let userId = req.body.userId;
+        let rep = req.body.response;
 
         try {
             let groupRepository = getRepository(Group);
@@ -97,13 +98,17 @@ class GroupController {
             let user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["pendingGroups", "groups"]});
 
             group.pendingUsers = group.pendingUsers.filter(u => u.id !== user.id);
-            group.users.push(user);
             user.pendingGroups = user.pendingGroups.filter(g => g.id !== group.id);
-            user.groups.push(group);
+            let response
+            if (rep) {
+                group.users.push(user);
+                user.groups.push(group);
+                response = {success: "Approved!"}
+            } else {
+                response = {error: "Rejected!"}
+            }
             await userRepository.save(user);
             await groupRepository.save(group);
-
-            let response = {success: "Approved!"}
             res.status(HttpStatus.OK).send(response);
         } catch (e) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
