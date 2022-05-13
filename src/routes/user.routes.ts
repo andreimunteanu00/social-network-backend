@@ -14,13 +14,13 @@ router.get("/", [checkJwt, checkRole(["ADMIN"])], UserController.listAll);
 // Get one user
 router.get(
     "/:id([0-9]+)",
-    [checkJwt, checkRole(["user"]), loggedUser],
+    [checkJwt, checkRole(["user", "MODERATOR", "ADMIN"]), loggedUser],
     UserController.getOneById
 );
 
 router.get(
   "/image/:id([0-9]+)",
-  [checkJwt, checkRole(["user"]), loggedUser],
+  [checkJwt, checkRole(["user", "MODERATOR", "ADMIN"]), loggedUser],
   UserController.getImageById
 );
 

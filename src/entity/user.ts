@@ -1,7 +1,7 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinColumn, JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -38,6 +38,7 @@ export class User {
   profilePic!: string;
 
   @ManyToMany(() => Group, group => group.users)
+  @JoinTable({name: 'group_user'})
   groups!: Group[];
 
   @ManyToMany(() => Group, group => group.moderators)

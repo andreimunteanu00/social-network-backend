@@ -11,8 +11,9 @@ router.get('/', [checkJwt], GroupController.listAll);
 /* Get a group */
 router.get('/:groupId', [checkJwt], GroupController.getGroup)
 
-
 router.get('/userNotIn/:userId', [checkJwt], GroupController.getGroupsUserNotIn)
+
+router.get('/userIn/:userId', [checkJwt], GroupController.getGroupsUserIn)
 
 /* Create group */
 router.post('/', [checkJwt, checkRole(["ADMIN"])], GroupController.createGroup);
@@ -21,7 +22,7 @@ router.post('/', [checkJwt, checkRole(["ADMIN"])], GroupController.createGroup);
 router.post('/:groupId/join', [checkJwt], GroupController.requestGroupJoin);
 
 /* Request a list of all pending users */
-router.get('/:groupId/pending', [checkJwt], GroupController.listPendingUsers);
+router.get('/:groupId/pending', [checkJwt, checkRole(["MODERATOR", "ADMIN"])], GroupController.listPendingUsers);
 
 /* */
 router.post('/:groupId/approve', [checkJwt, checkRole(["MODERATOR", "ADMIN"])], GroupController.approveUser);
