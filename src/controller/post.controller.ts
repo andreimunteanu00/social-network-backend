@@ -4,6 +4,8 @@ import {getRepository} from "typeorm";
 import {Post} from "../entity/post";
 import {User} from "../entity/user";
 import {Group} from "../entity/group";
+import {FileController} from "./file.controller";
+import {PostFile} from "../entity/postFile";
 
 class PostController {
     static createPost = async (req: Request, res: Response) => {
@@ -25,11 +27,36 @@ class PostController {
             post.author = author;
             post.group = group;
 
+            if (req.body.hasOwnProperty("files")) {
+                if (req.body.files.size > 4) {
+                    res.status(HttpStatus.CONFLICT).send("Too many files!");
+                }
+
+                post = await postRepository.save(post);
+
+                const postFileRepository = getRepository(PostFile);
+                let fileIndex = 0;
+                for (let file of req.body.files) {
+                    let postFile = new PostFile();
+                    postFile.fileName = `src/asset/post/p_${post.id}_${fileIndex}.png`;
+
+                    if (post.postFiles == null) {
+                        post.postFiles = [];
+                    }
+
+                    post.postFiles.push(postFile);
+                    await postFileRepository.save(postFile);
+
+                    await Promise.resolve(FileController.uploadPhoto(file, postFile.fileName));
+                    fileIndex++;
+                }
+            }
+
             await postRepository.save(post);
 
             res.status(HttpStatus.CREATED).send();
-
         } catch (e) {
+            console.log(e);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
     }

@@ -1,6 +1,15 @@
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn
+} from "typeorm";
 import {User} from "./user";
 import {Group} from "./group";
+import {PostFile} from "./postFile";
 
 @Entity()
 export class Post {
@@ -23,4 +32,10 @@ export class Post {
 
     @Column({default: 0})
     likes!: number;
+
+    @CreateDateColumn()
+    createDate!: Date;
+
+    @OneToMany(() => PostFile, postFile => postFile.post)
+    postFiles!: PostFile[]
 }

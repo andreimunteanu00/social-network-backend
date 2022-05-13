@@ -172,7 +172,12 @@ class GroupController {
   }
 
   static getPosts = async (req: Request, res: Response) => {
-        const lastIndex = req.body.lastIndex;
+        let lastIndex;
+        if (req.body.hasOwnProperty("lastIndex")) {
+            lastIndex = req.body.lastIndex;
+        } else {
+            lastIndex = 0;
+        }
         const groupId = req.params.groupId;
 
         try {
