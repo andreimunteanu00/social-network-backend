@@ -152,6 +152,23 @@ class UserController{
     }
   }
 
+  static moderatorOfGroup = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    const groupId = req.params.groupId;
+
+    try {
+      let user = await getRepository(User).findOneOrFail({where: {id: userId} , relations: ["moderatedGroups"]})
+      for (let g of user.moderatedGroups) {
+        if (g.id === +groupId) {
+          return res.status(HttpStatus.OK).send(true);
+        }
+      }
+      res.status(HttpStatus.OK).send(false);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
 }
 
 export default UserController;

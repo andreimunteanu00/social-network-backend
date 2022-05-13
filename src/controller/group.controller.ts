@@ -111,11 +111,11 @@ class GroupController {
     }
 
   static getGroup = async (req: Request, res: Response) => {
-      const id = req.params.groupId;
+      const groupId = req.params.groupId;
 
       try {
         let groupRepository = getRepository(Group);
-        let group = await groupRepository.findOneOrFail({ where: id });
+        let group = await groupRepository.findOneOrFail({ where: {id: groupId }});
         res.status(HttpStatus.OK).send(group);
       } catch (e) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
