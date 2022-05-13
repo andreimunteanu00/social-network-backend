@@ -36,8 +36,19 @@ class UserController{
 
   static getImageById = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
-    const img = await Promise.resolve(FileController.getPhoto(`src/asset/user/${userId}.png`));
-    res.status(HttpStatus.OK).send({img});
+
+    try {
+      const user = await getRepository(User).findOneOrFail({ where: { id: userId } });
+      if (user.profilePic) {
+        const img = await Promise.resolve(FileController.getPhoto(`src/asset/user/${userId}.png`));
+        res.status(HttpStatus.OK).send({img});
+      } else {
+        res.status(HttpStatus.OK).send();
+      }
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+
   }
 
   static newUser = async (req: Request, res: Response) => {

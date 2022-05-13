@@ -1,6 +1,5 @@
-import { Router } from "express";
+import {Router} from "express";
 import AuthController from "../controller/auth.controller";
-import { checkJwt } from "../middleware/checkJwt";
 
 const router = Router();
 //Login route
