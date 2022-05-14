@@ -47,4 +47,6 @@ router.get('/groups', [checkJwt], UserController.getUserGroups);
 /* Get a list of user's post history */
 router.get('/posts', [checkJwt], UserController.getUserPosts);
 
+router.get('/:groupId/checkModerator', [checkJwt], UserController.moderatorOfGroup);
+
 export default router;
