@@ -63,6 +63,43 @@ class PostController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
     }
+
+    static likePost = async (req: Request, res: Response) => {
+        const userId = res.locals.jwtPayload.userId;
+        const postId = req.params.postId;
+
+        try {
+            const userRepository = getRepository(User);
+            const postRepository = getRepository(Post);
+
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["likedPosts"] });
+            const post = await postRepository.findOneOrFail({ where: { id: postId }, relations: ["userLikes"] });
+
+            if (user.likedPosts == null) {
+                user.likedPosts = [];
+            }
+
+            if (post.userLikes == null) {
+                post.userLikes = [];
+            }
+
+            if (user.likedPosts.includes(post) || post.userLikes.includes(user)) {
+                res.status(HttpStatus.CONFLICT).send();
+                return;
+            }
+
+            user.likedPosts.push(post);
+            post.userLikes.push(user);
+
+            await userRepository.save(user);
+            await postRepository.save(post);
+
+            res.status(HttpStatus.OK).send();
+        } catch (e) {
+            console.log(e);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+        }
+    }
 }
 
 export default PostController;

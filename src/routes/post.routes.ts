@@ -7,4 +7,6 @@ const router = Router();
 
 router.post('/:groupId', [checkJwt], PostController.createPost);
 
+router.put('/:postId', [checkJwt], PostController.likePost);
+
 export default router;

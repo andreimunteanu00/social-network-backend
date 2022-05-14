@@ -38,7 +38,7 @@ export class User {
   profilePic!: string;
 
   @ManyToMany(() => Group, group => group.users)
-  @JoinTable({name: 'group_user'})
+  @JoinTable({ name: 'group_user' })
   groups!: Group[];
 
   @ManyToMany(() => Group, group => group.moderators)
@@ -49,6 +49,10 @@ export class User {
 
   @OneToMany(() => Post, post => post.author)
   posts!: Post[];
+
+  @ManyToMany(() => Post, post => post.userLikes)
+  @JoinTable({ name: 'user_like' })
+  likedPosts!: Post[];
 
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);

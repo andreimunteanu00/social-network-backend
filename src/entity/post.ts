@@ -2,7 +2,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinColumn,
+    JoinColumn, ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn
@@ -30,12 +30,12 @@ export class Post {
     @JoinColumn()
     group!: Group;
 
-    @Column({default: 0})
-    likes!: number;
-
     @CreateDateColumn()
     createDate!: Date;
 
     @OneToMany(() => PostFile, postFile => postFile.post)
     postFiles!: PostFile[]
+
+    @ManyToMany(() => User, user => user.likedPosts)
+    userLikes!: User[]
 }
