@@ -49,4 +49,6 @@ router.get('/posts', [checkJwt], UserController.getUserPosts);
 
 router.get('/:groupId/checkModerator', [checkJwt], UserController.moderatorOfGroup);
 
+router.get('/feed', [checkJwt], UserController.getUserFeed);
+
 export default router;

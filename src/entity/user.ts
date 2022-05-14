@@ -58,6 +58,15 @@ export class User {
       return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 
+  getGroupsIndexArray() {
+    let array = [];
+    for (let group of this.groups) {
+      array.push(group.id);
+    }
+
+    return array;
+  }
+
   toJSON() {
     return classToPlain(this);
   }
