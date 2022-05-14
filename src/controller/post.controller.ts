@@ -32,6 +32,9 @@ class PostController {
                     res.status(HttpStatus.CONFLICT).send("Too many files!");
                 }
 
+                /* Required because we need the post's id to name the files.
+                 * Id is generated when entity is saved.               
+                 */
                 post = await postRepository.save(post);
 
                 const postFileRepository = getRepository(PostFile);
