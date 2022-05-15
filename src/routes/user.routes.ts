@@ -29,8 +29,8 @@ router.post("/", [checkJwt, checkRole(["ADMIN"])], UserController.newUser);
 
 //Edit one user
 router.patch(
-    "/:id([0-9]+)",
-    [checkJwt, checkRole(["user"])],
+    "/:id",
+    [checkJwt, checkRole(["user", "MODERATOR", "ADMIN"])],
     UserController.save
 );
 
@@ -48,6 +48,12 @@ router.get('/groups', [checkJwt], UserController.getUserGroups);
 router.get('/posts', [checkJwt], UserController.getUserPosts);
 
 router.get('/:groupId/checkModerator', [checkJwt], UserController.moderatorOfGroup);
+
+router.get('/chats', [checkJwt], UserController.getChats);
+
+router.get('/newChats', [checkJwt], UserController.getNewChats);
+
+router.get('/:id/createChat', [checkJwt], UserController.createChat);
 
 router.get('/feed', [checkJwt], UserController.getUserFeed);
 

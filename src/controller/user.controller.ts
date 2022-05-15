@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import {getManager, getRepository} from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
 import {FileController} from "./file.controller";
+import {Chat} from "../entity/chat";
+import jwt_decode from "jwt-decode";
 import {Post} from "../entity/post";
 
 class UserController{
@@ -165,6 +167,68 @@ class UserController{
         }
       }
       res.status(HttpStatus.OK).send(false);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
+  static getChats = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    try {
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
+      res.status(HttpStatus.OK).send(user.chats);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
+  static getNewChats = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    try {
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
+      const users = await getRepository(User).find({ relations: ["chats"] });
+      const chats = await getRepository(Chat).find({relations: ["users"]});
+      let newUserToChat = [];
+      for (let u of users) {
+        let found = false;
+        for (let c of u.chats) {
+          for (let myc of user.chats) {
+            if (c.id === myc.id) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            break;
+          }
+        }
+        if (!found) {
+          newUserToChat.push(u);
+        }
+      }
+      res.status(HttpStatus.OK).send(newUserToChat);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
+  static createChat = async (req: Request, res: Response) => {
+    const userWith = req.params.id;
+    const encodedToken = <string>req.headers["authorization"]?.substring(7);
+    const token: any = jwt_decode(encodedToken);
+    const userId = token.userId;
+    try {
+      const userRepository = await getRepository(User);
+      const userTo = await userRepository.findOneOrFail({where: {id: userWith}});
+      const userFrom = await userRepository.findOneOrFail({where: {id: userId}});
+      const chat = new Chat();
+      await getRepository(Chat).save(chat);
+      const entityManager = getManager();
+      await entityManager.query(`
+      INSERT INTO chat_user(chatId, userId)
+      VALUES (?, ?), (?, ?)
+      `, [chat.id, userFrom.id, chat.id, userTo.id]);
+      res.status(HttpStatus.CREATED).send(chat.id);
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }

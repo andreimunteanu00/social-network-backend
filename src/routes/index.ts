@@ -4,6 +4,7 @@ import user from "./user.routes";
 import feed from "./feed.router";
 import group from "./group.routes";
 import post from "./post.routes";
+import chat from "./chat.routes";
 
 const routes = Router();
 
@@ -12,5 +13,6 @@ routes.use("/user", user);
 routes.use("/feed", feed);
 routes.use("/group", group);
 routes.use("/post", post);
+routes.use("/chat", chat);
 
 export default routes;

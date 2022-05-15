@@ -11,6 +11,7 @@ import * as bcrypt from "bcryptjs";
 import {Group} from "./group";
 import {classToPlain, Exclude} from "class-transformer";
 import {Post} from "./post";
+import {Chat} from "./chat";
 
 @Entity()
 @Unique(["username"])
@@ -38,7 +39,7 @@ export class User {
   profilePic!: string;
 
   @ManyToMany(() => Group, group => group.users)
-  @JoinTable({ name: 'group_user' })
+  @JoinTable({name: 'group_user'})
   groups!: Group[];
 
   @ManyToMany(() => Group, group => group.moderators)
@@ -49,6 +50,13 @@ export class User {
 
   @OneToMany(() => Post, post => post.author)
   posts!: Post[];
+
+  @ManyToMany(() => Chat, chat => chat.users, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE"
+  })
+  @JoinTable({name: 'chat_user'})
+  chats!: Chat[];
 
   @ManyToMany(() => Post, post => post.userLikes)
   @JoinTable({ name: 'user_like' })
