@@ -58,12 +58,25 @@ export class User {
   @JoinTable({name: 'chat_user'})
   chats!: Chat[];
 
+  @ManyToMany(() => Post, post => post.userLikes)
+  @JoinTable({ name: 'user_like' })
+  likedPosts!: Post[];
+
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);
   }
 
   checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
       return bcrypt.compareSync(unencryptedPassword, this.password);
+  }
+
+  getGroupsIndexArray() {
+    let array = [];
+    for (let group of this.groups) {
+      array.push(group.id);
+    }
+
+    return array;
   }
 
   toJSON() {

@@ -7,6 +7,7 @@ import * as HttpStatus from 'http-status';
 import {FileController} from "./file.controller";
 import {Chat} from "../entity/chat";
 import jwt_decode from "jwt-decode";
+import {Post} from "../entity/post";
 
 class UserController{
 
@@ -232,7 +233,36 @@ class UserController{
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }
   }
-  }
 
+  static getUserFeed = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    let lastIndex = 0;
+    if (req.body.hasOwnProperty("lastIndex")) {
+      lastIndex = req.body.lastIndex;
+    }
+
+    try {
+      const postRepository = getRepository(Post);
+      const userRepository = getRepository(User);
+
+      const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
+      const userGroups = user.getGroupsIndexArray();
+
+      const query = postRepository.createQueryBuilder("post")
+          .where("post.groupId IN (:groups)", {groups: userGroups})
+          .andWhere("post.id > :lastIndex", {lastIndex: lastIndex})
+          .orderBy("post.id")
+          .limit(10);
+
+      const posts = await query.getMany();
+
+      res.status(HttpStatus.OK).send(posts);
+
+    } catch (e) {
+      console.log(e);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+}
 
 export default UserController;

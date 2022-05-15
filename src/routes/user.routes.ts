@@ -55,4 +55,6 @@ router.get('/newChats', [checkJwt], UserController.getNewChats);
 
 router.get('/:id/createChat', [checkJwt], UserController.createChat);
 
+router.get('/feed', [checkJwt], UserController.getUserFeed);
+
 export default router;
