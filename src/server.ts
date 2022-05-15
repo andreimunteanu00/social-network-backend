@@ -56,7 +56,7 @@ const main = async () => {
       socket.broadcast.to(+data).emit('user joined');
     });
     socket.on('message', (data: any) => {
-      io.sockets.in(+data.room).emit('new message', {user: data.user, message: data.message, room: data.room});
+      io.sockets.in(+data.room).emit('new message', {sender: data.sender, message: data.message, room: data.room});
     });
     socket.on('typing', (data: any) => {
       io.sockets.in(+data.room).emit('typing', data);
