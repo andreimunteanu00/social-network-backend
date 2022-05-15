@@ -5,6 +5,7 @@ import { validate } from "class-validator";
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
 import {FileController} from "./file.controller";
+import {Chat} from "../entity/chat";
 
 class UserController{
 
@@ -169,6 +170,45 @@ class UserController{
     }
   }
 
+  static getChats = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    try {
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
+      res.status(HttpStatus.OK).send(user.chats);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+
+  static getNewChats = async (req: Request, res: Response) => {
+    const userId = res.locals.jwtPayload.userId;
+    try {
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
+      const users = await getRepository(User).find({ relations: ["chats"] });
+      const chats = await getRepository(Chat).find({relations: ["users"]});
+      let newUserToChat = [];
+      for (let u of users) {
+        let found = false;
+        for (let c of u.chats) {
+          for (let myc of user.chats) {
+            if (c.id === myc.id) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            break;
+          }
+        }
+        if (!found) {
+          newUserToChat.push(u);
+        }
+      }
+      res.status(HttpStatus.OK).send(newUserToChat);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
 }
 
 export default UserController;

@@ -49,4 +49,8 @@ router.get('/posts', [checkJwt], UserController.getUserPosts);
 
 router.get('/:groupId/checkModerator', [checkJwt], UserController.moderatorOfGroup);
 
+router.get('/chats', [checkJwt], UserController.getChats);
+
+router.get('/newChats', [checkJwt], UserController.getNewChats);
+
 export default router;

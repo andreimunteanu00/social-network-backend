@@ -11,6 +11,7 @@ import * as bcrypt from "bcryptjs";
 import {Group} from "./group";
 import {classToPlain, Exclude} from "class-transformer";
 import {Post} from "./post";
+import {Chat} from "./chat";
 
 @Entity()
 @Unique(["username"])
@@ -49,6 +50,10 @@ export class User {
 
   @OneToMany(() => Post, post => post.author)
   posts!: Post[];
+
+  @ManyToMany(() => Chat, chat => chat.users)
+  @JoinTable({name: 'chat_user'})
+  chats!: Chat[];
 
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);
