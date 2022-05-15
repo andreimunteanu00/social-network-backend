@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import {getManager, getRepository} from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/user";
 import * as HttpStatus from 'http-status';
 import {FileController} from "./file.controller";
 import {Chat} from "../entity/chat";
+import jwt_decode from "jwt-decode";
 
 class UserController{
 
@@ -209,6 +210,29 @@ class UserController{
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     }
   }
-}
+
+  static createChat = async (req: Request, res: Response) => {
+    const userWith = req.params.id;
+    const encodedToken = <string>req.headers["authorization"]?.substring(7);
+    const token: any = jwt_decode(encodedToken);
+    const userId = token.userId;
+    try {
+      const userRepository = await getRepository(User);
+      const userTo = await userRepository.findOneOrFail({where: {id: userWith}});
+      const userFrom = await userRepository.findOneOrFail({where: {id: userId}});
+      const chat = new Chat();
+      await getRepository(Chat).save(chat);
+      const entityManager = getManager();
+      await entityManager.query(`
+      INSERT INTO chat_user(chatId, userId)
+      VALUES (?, ?), (?, ?)
+      `, [chat.id, userFrom.id, chat.id, userTo.id]);
+      res.status(HttpStatus.CREATED).send(chat.id);
+    } catch (e) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+    }
+  }
+  }
+
 
 export default UserController;

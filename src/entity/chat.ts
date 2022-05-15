@@ -9,7 +9,10 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToMany(() => User, user => user.groups)
+  @ManyToMany(() => User, user => user.groups, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE"
+  })
   @JoinTable({name: 'chat_user'})
   users!: User[];
 

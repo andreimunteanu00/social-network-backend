@@ -51,7 +51,10 @@ export class User {
   @OneToMany(() => Post, post => post.author)
   posts!: Post[];
 
-  @ManyToMany(() => Chat, chat => chat.users)
+  @ManyToMany(() => Chat, chat => chat.users, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE"
+  })
   @JoinTable({name: 'chat_user'})
   chats!: Chat[];
 
