@@ -8,6 +8,7 @@ import {FileController} from "./file.controller";
 import {Chat} from "../entity/chat";
 import jwt_decode from "jwt-decode";
 import {Post} from "../entity/post";
+import {checkLikedPosts} from "../middleware/postUtils";
 
 class UserController{
 
@@ -236,9 +237,11 @@ class UserController{
 
   static getUserFeed = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
-    let lastIndex = 0;
-    if (req.body.hasOwnProperty("lastIndex")) {
-      lastIndex = req.body.lastIndex;
+    let lastIndex;
+    if (req.params.hasOwnProperty("lastIndex")) {
+      lastIndex = req.params.lastIndex;
+    } else {
+      lastIndex = 0;
     }
 
     try {
@@ -251,10 +254,16 @@ class UserController{
       const query = postRepository.createQueryBuilder("post")
           .where("post.groupId IN (:groups)", {groups: userGroups})
           .andWhere("post.id > :lastIndex", {lastIndex: lastIndex})
+          .loadRelationCountAndMap("post.likeCount", "post.userLikes")
+          .loadRelationIdAndMap("post.userLikesIds", "post.userLikes")
           .orderBy("post.id")
           .limit(10);
 
       const posts = await query.getMany();
+
+      checkLikedPosts(user, posts);
+
+      console.log(posts);
 
       res.status(HttpStatus.OK).send(posts);
 
