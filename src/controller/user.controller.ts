@@ -8,7 +8,7 @@ import {FileController} from "./file.controller";
 import {Chat} from "../entity/chat";
 import jwt_decode from "jwt-decode";
 import {Post} from "../entity/post";
-import {checkLikedPosts} from "../middleware/postUtils";
+import {checkLikedPosts, getTimeCreated} from "../middleware/postUtils";
 
 class UserController{
 
@@ -262,11 +262,9 @@ class UserController{
       const posts = await query.getMany();
 
       checkLikedPosts(user, posts);
-
-      console.log(posts);
+      getTimeCreated(posts);
 
       res.status(HttpStatus.OK).send(posts);
-
     } catch (e) {
       console.log(e);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();

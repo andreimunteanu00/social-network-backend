@@ -7,6 +7,8 @@ const router = Router();
 
 router.post('/:groupId', [checkJwt], PostController.createPost);
 
-router.put('/:postId', [checkJwt], PostController.likePost);
+router.patch('/:postId', [checkJwt], PostController.likePost);
+
+router.patch('/:postId/unlike', [checkJwt], PostController.unlikePost)
 
 export default router;

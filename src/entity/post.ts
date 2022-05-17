@@ -39,9 +39,9 @@ export class Post {
     @ManyToMany(() => User, user => user.likedPosts)
     userLikes!: User[]
 
+    /* --- */
     likeCount!: number;
-
     alreadyLiked!: boolean;
-
     userLikesIds!: number[];
+    timeCreatedString!: string;
 }
