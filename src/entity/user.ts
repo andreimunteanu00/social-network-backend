@@ -1,7 +1,7 @@
 import {
   Column,
   Entity,
-  JoinColumn, JoinTable,
+  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,6 +12,7 @@ import {Group} from "./group";
 import {classToPlain, Exclude} from "class-transformer";
 import {Post} from "./post";
 import {Chat} from "./chat";
+import {Comment} from "./comment"
 
 @Entity()
 @Unique(["username"])
@@ -61,6 +62,13 @@ export class User {
   @ManyToMany(() => Post, post => post.userLikes)
   @JoinTable({ name: 'user_like' })
   likedPosts!: Post[];
+
+  @OneToMany(() => Comment, comment => comment.author)
+  comments!: Comment[];
+
+  @ManyToMany(() => Comment, comment => comment.userLikes)
+  @JoinTable({ name: 'user_comment_like' })
+  likedComments!: Comment[];
 
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);

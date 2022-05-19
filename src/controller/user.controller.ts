@@ -238,6 +238,7 @@ class UserController{
   static getUserFeed = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
     let lastIndex;
+    console.log(req.params);
     if (req.params.hasOwnProperty("lastIndex")) {
       lastIndex = req.params.lastIndex;
     } else {
@@ -250,6 +251,7 @@ class UserController{
 
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
+
 
       const query = postRepository.createQueryBuilder("post")
           .where("post.groupId IN (:groups)", {groups: userGroups})
