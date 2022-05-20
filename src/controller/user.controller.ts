@@ -237,13 +237,7 @@ class UserController{
 
   static getUserFeed = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
-    let lastIndex;
-    console.log(req.params);
-    if (req.params.hasOwnProperty("lastIndex")) {
-      lastIndex = req.params.lastIndex;
-    } else {
-      lastIndex = 0;
-    }
+    let lastIndex = req.params.lastIndex;
 
     try {
       const postRepository = getRepository(Post);
