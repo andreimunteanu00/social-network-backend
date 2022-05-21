@@ -8,6 +8,7 @@ import {FileController} from "./file.controller";
 import {Chat} from "../entity/chat";
 import jwt_decode from "jwt-decode";
 import {Post} from "../entity/post";
+import {Comment} from "../entity/comment";
 import {checkLikedPosts, getTimeCreated} from "../middleware/postUtils";
 
 class UserController{
@@ -247,6 +248,7 @@ class UserController{
     try {
       const postRepository = getRepository(Post);
       const userRepository = getRepository(User);
+      const commentRepository = getRepository(Comment);
 
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
@@ -264,6 +266,13 @@ class UserController{
 
       checkLikedPosts(user, posts);
       getTimeCreated(posts);
+
+      for (let p of posts) {
+        const commentQuery = commentRepository.createQueryBuilder("comment")
+            .where("comment.postId = :postId", { postId: p.id });
+        p.comments = await commentQuery.getMany();
+        getTimeCreated(p.comments);
+      }
 
       res.status(HttpStatus.OK).send(posts);
     } catch (e) {

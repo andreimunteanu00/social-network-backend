@@ -4,6 +4,7 @@ import {getRepository} from "typeorm";
 import {User} from "../entity/user";
 import {Post} from "../entity/post";
 import {Comment} from "../entity/comment"
+import {getCreateTimeAsString} from "../middleware/postUtils";
 
 class CommentController {
     static createComment = async (req: Request, res: Response) => {
@@ -16,8 +17,8 @@ class CommentController {
             const postRepository = getRepository(Post);
             const commentRepository = getRepository(Comment);
 
-            const user = await userRepository.findOneOrFail({ where: { id: userId } });
-            const post = await postRepository.findOneOrFail({ where: { id: postId } });
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["comments"] });
+            const post = await postRepository.findOneOrFail({ where: { id: postId }, relations: ["comments"] });
 
             let comment = new Comment();
             comment.post = post;
@@ -40,7 +41,9 @@ class CommentController {
             await postRepository.save(post);
             await commentRepository.save(comment);
 
-            res.status(HttpStatus.CREATED).send();
+            getCreateTimeAsString(comment);
+
+            res.status(HttpStatus.CREATED).send(comment);
         } catch (e) {
             console.log(e);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();

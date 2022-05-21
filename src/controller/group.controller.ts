@@ -7,6 +7,7 @@ import {User} from "../entity/user";
 import {FileController} from "./file.controller";
 import {Post} from "../entity/post";
 import {checkLikedPosts, getTimeCreated} from "../middleware/postUtils";
+import {Comment} from "../entity/comment";
 
 class GroupController {
     static listAll = async (req: Request, res: Response) => {
@@ -198,6 +199,13 @@ class GroupController {
 
             checkLikedPosts(user, posts);
             getTimeCreated(posts);
+
+            for (let p of posts) {
+                const commentQuery = getRepository(Comment).createQueryBuilder("comment")
+                    .where("comment.postId = :postId", { postId: p.id });
+                p.comments = await commentQuery.getMany();
+                getTimeCreated(p.comments);
+            }
 
             res.status(HttpStatus.OK).send(posts);
 
