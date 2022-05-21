@@ -203,6 +203,11 @@ class UserController{
           }
         }
         if (!found) {
+          try {
+            u.imageString = await Promise.resolve(FileController.getPhoto(u.profilePic));
+          } catch {
+
+          }
           newUserToChat.push(u);
         }
       }

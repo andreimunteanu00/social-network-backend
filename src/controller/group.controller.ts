@@ -76,7 +76,9 @@ class GroupController {
         try {
             let groupRepository = getRepository(Group);
             let group = await groupRepository.findOneOrFail({ where: { id: groupId }, relations: ["pendingUsers"]});
-
+            for (let u of group.pendingUsers) {
+              u.imageString = await Promise.resolve(FileController.getPhoto(`src/asset/user/${u.id}.png`));
+            }
             res.status(HttpStatus.OK).send(group.pendingUsers);
 
         } catch (e) {

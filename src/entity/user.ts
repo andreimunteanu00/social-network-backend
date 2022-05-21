@@ -1,5 +1,5 @@
 import {
-  Column,
+  Column, CreateDateColumn,
   Entity,
   JoinColumn, JoinTable,
   ManyToMany,
@@ -30,10 +30,22 @@ export class User {
   role!: string;
 
   @Column()
+  firstName!: string;
+
+  @Column()
+  lastName!: string;
+
+  @Column()
+  birthDate!: Date;
+
+  @Column()
   email!: string;
 
   @Column()
   university!: string;
+
+  @Column()
+  imageString!: string;
 
   @Column()
   profilePic!: string;
