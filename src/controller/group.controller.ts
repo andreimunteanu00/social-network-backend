@@ -6,6 +6,7 @@ import * as HttpStatus from 'http-status';
 import {User} from "../entity/user";
 import {FileController} from "./file.controller";
 import {Post} from "../entity/post";
+import {checkLikedPosts, getTimeCreated} from "../middleware/postUtils";
 
 class GroupController {
     static listAll = async (req: Request, res: Response) => {
@@ -179,21 +180,24 @@ class GroupController {
   }
 
   static getPosts = async (req: Request, res: Response) => {
-        let lastIndex;
-        if (req.body.hasOwnProperty("lastIndex")) {
-            lastIndex = req.body.lastIndex;
-        } else {
-            lastIndex = 0;
-        }
+        let lastIndex = req.params.lastIndex;
+
         const groupId = req.params.groupId;
+        const userId = res.locals.jwtPayload.userId;
 
         try {
+            let user = await getRepository(User).findOneOrFail({ where: { id: userId } })
             let query = await getRepository(Post).createQueryBuilder("post")
                 .where("post.groupId = :groupId", { groupId: groupId})
                 .andWhere("post.id > :lastIndex", { lastIndex: lastIndex })
+                .loadRelationCountAndMap("post.likeCount", "post.userLikes")
+                .loadRelationIdAndMap("post.userLikesIds", "post.userLikes")
                 .orderBy("post.id").limit(10);
 
             let posts = await query.getMany();
+
+            checkLikedPosts(user, posts);
+            getTimeCreated(posts);
 
             res.status(HttpStatus.OK).send(posts);
 

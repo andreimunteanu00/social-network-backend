@@ -10,6 +10,7 @@ import {
 import {User} from "./user";
 import {Group} from "./group";
 import {PostFile} from "./postFile";
+import {Comment} from "./comment";
 
 @Entity()
 export class Post {
@@ -38,4 +39,13 @@ export class Post {
 
     @ManyToMany(() => User, user => user.likedPosts)
     userLikes!: User[]
+
+    @OneToMany(() => Comment, comment => comment.post)
+    comments!: Comment[];
+
+    /* --- */
+    likeCount!: number;
+    alreadyLiked!: boolean;
+    userLikesIds!: number[];
+    timeCreatedString!: string;
 }
