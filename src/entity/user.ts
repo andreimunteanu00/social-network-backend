@@ -13,6 +13,7 @@ import {classToPlain, Exclude} from "class-transformer";
 import {Post} from "./post";
 import {Chat} from "./chat";
 import {Comment} from "./comment"
+import {Story} from "./story";
 
 @Entity()
 @Unique(["username"])
@@ -81,6 +82,9 @@ export class User {
   @ManyToMany(() => Comment, comment => comment.userLikes)
   @JoinTable({ name: 'user_comment_like' })
   likedComments!: Comment[];
+
+  @OneToMany(() => Story, story => story.author)
+  stories!: Story[];
 
   hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);
