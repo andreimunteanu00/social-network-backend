@@ -177,7 +177,7 @@ class UserController{
   static getChats = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
     try {
-      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats", "chats.users"]});
       res.status(HttpStatus.OK).send(user.chats);
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
@@ -189,7 +189,6 @@ class UserController{
     try {
       const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
       const users = await getRepository(User).find({ relations: ["chats"] });
-      const chats = await getRepository(Chat).find({relations: ["users"]});
       let newUserToChat = [];
       for (let u of users) {
         let found = false;
