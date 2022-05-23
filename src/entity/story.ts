@@ -20,6 +20,9 @@ export class Story {
     @CreateDateColumn()
     createDate!: Date;
 
-    @Column()
+    @Column({ default: "" })
     filename!: string;
+
+    timeCreatedString!: string;
+    userProfilePhoto!: string;
 }

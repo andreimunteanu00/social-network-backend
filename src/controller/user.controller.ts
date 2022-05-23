@@ -253,10 +253,9 @@ class UserController{
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
 
-
       const query = postRepository.createQueryBuilder("post")
-          .where("post.groupId IN (:groups)", {groups: userGroups})
-          .andWhere("post.id > :lastIndex", {lastIndex: lastIndex})
+          .where("post.groupId IN (:groups)", { groups: userGroups })
+          .andWhere("post.id > :lastIndex", { lastIndex: lastIndex })
           .loadRelationCountAndMap("post.likeCount", "post.userLikes")
           .loadRelationIdAndMap("post.userLikesIds", "post.userLikes")
           .orderBy("post.id")

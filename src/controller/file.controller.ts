@@ -1,3 +1,5 @@
+import {Story} from "../entity/story";
+
 const fs = require("fs");
 
 export class FileController {
@@ -12,5 +14,12 @@ export class FileController {
     await fs.promises.writeFile(path, base64Data, 'base64');
   }
 
+  static getStoryProfilePhotos = async (stories: Story[]) => {
+    for (let story of stories) {
+      if (story.author.profilePic != null) {
+        story.userProfilePhoto = await Promise.resolve(FileController.getPhoto(story.author.profilePic));
+      }
+    }
+  }
 }
 

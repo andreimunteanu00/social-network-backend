@@ -8,4 +8,6 @@ router.post('/', [checkJwt], StoryController.postStory);
 
 router.get('/feed', [checkJwt], StoryController.getStoryFeed);
 
+router.get('/:storyId/media', [checkJwt], StoryController.getStoryMedia);
+
 export default router;
