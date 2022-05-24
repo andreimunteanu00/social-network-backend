@@ -94,9 +94,11 @@ class UserController{
     const temp = user.profilePic;
 
     // Upload photo if exists
-    if (!user.profilePic.includes("src")) {
-      user.profilePic = `src/asset/user/${user.id}.png`;
-      await Promise.resolve(FileController.uploadPhoto(temp, user.profilePic));
+    if (user.profilePic != null) {
+      if (!user.profilePic.includes("src")) {
+        user.profilePic = `src/asset/user/${user.id}.png`;
+        await Promise.resolve(FileController.uploadPhoto(temp, user.profilePic));
+      }
     }
 
     //Try to safe, if fails, that means username already in use
@@ -252,6 +254,10 @@ class UserController{
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
 
+      if (userGroups.length === 0) {
+        res.status(HttpStatus.OK).send();
+        return;
+      }
 
       const query = postRepository.createQueryBuilder("post")
           .where("post.groupId IN (:groups)", {groups: userGroups})

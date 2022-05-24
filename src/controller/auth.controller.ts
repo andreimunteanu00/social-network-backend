@@ -93,7 +93,11 @@ class AuthController {
       const userRepository = getRepository(User);
       let user: User = req.body;
       user.role = "user";
+      user.firstName = "";
+      user.lastName = "";
+      user.birthDate = new Date();
       user.profilePic = "";
+      user.imageString = "";
       user = await userRepository.create(user);
       user.hashPassword();
       await userRepository.save(user);
