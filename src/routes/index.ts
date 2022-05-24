@@ -6,6 +6,7 @@ import group from "./group.routes";
 import post from "./post.routes";
 import chat from "./chat.routes";
 import comment from "./comment.routes"
+import story from "./story.routes";
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use("/group", group);
 routes.use("/post", post);
 routes.use("/chat", chat);
 routes.use("/comment", comment);
+routes.use("/story", story);
 
 export default routes;

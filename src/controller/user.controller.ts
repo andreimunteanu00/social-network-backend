@@ -94,11 +94,9 @@ class UserController{
     const temp = user.profilePic;
 
     // Upload photo if exists
-    if (user.profilePic != null) {
-      if (!user.profilePic.includes("src")) {
-        user.profilePic = `src/asset/user/${user.id}.png`;
-        await Promise.resolve(FileController.uploadPhoto(temp, user.profilePic));
-      }
+    if (!user.profilePic.includes("src")) {
+      user.profilePic = `src/asset/user/${user.id}.png`;
+      await Promise.resolve(FileController.uploadPhoto(temp, user.profilePic));
     }
 
     //Try to safe, if fails, that means username already in use
@@ -179,7 +177,7 @@ class UserController{
   static getChats = async (req: Request, res: Response) => {
     const userId = res.locals.jwtPayload.userId;
     try {
-      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats", "chats.users"]});
+      const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
       res.status(HttpStatus.OK).send(user.chats);
     } catch (e) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
@@ -191,6 +189,7 @@ class UserController{
     try {
       const user = await getRepository(User).findOneOrFail({ where: {id: userId}, relations: ["chats"]});
       const users = await getRepository(User).find({ relations: ["chats"] });
+      const chats = await getRepository(Chat).find({relations: ["users"]});
       let newUserToChat = [];
       for (let u of users) {
         let found = false;
@@ -254,10 +253,6 @@ class UserController{
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
 
-      if (userGroups.length === 0) {
-        res.status(HttpStatus.OK).send();
-        return;
-      }
 
       const query = postRepository.createQueryBuilder("post")
           .where("post.groupId IN (:groups)", {groups: userGroups})

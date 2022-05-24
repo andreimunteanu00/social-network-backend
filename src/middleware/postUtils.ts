@@ -1,6 +1,8 @@
 import {Post} from "../entity/post";
 import {User} from "../entity/user";
 import {Comment} from "../entity/comment";
+import {Story} from "../entity/story";
+import {FileController} from "../controller/file.controller";
 
 export const checkLikedPosts = (user: User, posts: Post[]) => {
     for (let post of posts) {
@@ -8,7 +10,7 @@ export const checkLikedPosts = (user: User, posts: Post[]) => {
     }
 }
 
-export const getCreateTimeAsString = (obj: Post | Comment) => {
+export const getCreateTimeAsString = (obj: Post | Comment | Story) => {
     const currentDate = new Date();
 
     const msBetweenDates = Math.abs(currentDate.valueOf() - obj.createDate.valueOf());
@@ -27,8 +29,8 @@ export const getCreateTimeAsString = (obj: Post | Comment) => {
     obj.timeCreatedString = Math.floor(daysBetweenDates) + "d ago";
 }
 
-export const getTimeCreated = (posts: Post[] | Comment[]) => {
-    for (let post of posts) {
-        getCreateTimeAsString(post);
+export const getTimeCreated = (objs: Post[] | Comment[] | Story[]) => {
+    for (let obj of objs) {
+        getCreateTimeAsString(obj);
     }
 }
