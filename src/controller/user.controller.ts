@@ -252,6 +252,10 @@ class UserController{
       const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups"] });
       const userGroups = user.getGroupsIndexArray();
 
+      if (userGroups.length === 0) {
+        res.status(HttpStatus.OK).send();
+        return;
+      }
 
       const query = postRepository.createQueryBuilder("post")
           .where("post.groupId IN (:groups)", {groups: userGroups})
