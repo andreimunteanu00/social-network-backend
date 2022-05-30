@@ -50,6 +50,9 @@ class StoryController {
 
             const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ["groups", "groups.users"] });
 
+            if (user.groups.length == 0) {
+              res.status(HttpStatus.OK).send();
+            }
             // Get a list of users in the same groups as our
             // main user, without duplicates
             let map: any = {};
